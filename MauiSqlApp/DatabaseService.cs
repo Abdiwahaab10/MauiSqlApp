@@ -11,27 +11,27 @@ namespace MauiSqlApp
         public DatabaseService(string dbPath)
         {
             _database = new SQLiteAsyncConnection(dbPath);
-            _database.CreateTableAsync<Person>().Wait();
+            _database.CreateTableAsync<Student>().Wait();
         }
 
-        public Task<List<Person>> GetPeopleAsync()
+        public Task<List<Student>> GetStudentsAsync()
         {
-            return _database.Table<Person>().ToListAsync();
+            return _database.Table<Student>().ToListAsync();
         }
 
-        public Task<int> SavePersonAsync(Person person)
+        public Task<int> SaveStudentAsync(Student student)
         {
-            return _database.InsertAsync(person);
+            return _database.InsertAsync(student);
         }
 
-        public Task<int> UpdatePersonAsync(Person person)
+        public Task<int> UpdateStudentAsync(Student student)
         {
-            return _database.UpdateAsync(person);
+            return _database.UpdateAsync(student);
         }
 
-        public Task<int> DeletePersonAsync(Person person)
+        public Task<int> DeleteStudentAsync(Student student)
         {
-            return _database.DeleteAsync(person);
+            return _database.DeleteAsync(student);
         }
     }
 }
