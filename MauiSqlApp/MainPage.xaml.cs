@@ -1,7 +1,6 @@
 ﻿using Microsoft.Maui.Controls;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace MauiSqlApp
@@ -9,6 +8,9 @@ namespace MauiSqlApp
     public partial class MainPage : ContentPage
     {
         private DatabaseService _databaseService;
+        private List<Student> _allStudents;
+        private int _currentPage = 1;
+        private const int PageSize = 5; // Number of students per page
 
         public MainPage()
         {
@@ -20,8 +22,19 @@ namespace MauiSqlApp
 
         private async void LoadStudents()
         {
-            List<Student> students = await _databaseService.GetStudentsAsync();
-            StudentsCollectionView.ItemsSource = students;
+            _allStudents = await _databaseService.GetStudentsAsync();
+            DisplayStudentsForPage(_currentPage);
+        }
+
+        private void DisplayStudentsForPage(int page)
+        {
+            var studentsToDisplay = _allStudents
+                .Skip((page - 1) * PageSize)
+                .Take(PageSize)
+                .ToList();
+
+            StudentsCollectionView.ItemsSource = studentsToDisplay;
+            PageNumberLabel.Text = $"Page {page}";
         }
 
         private async void OnAddStudentClicked(object sender, EventArgs e)
@@ -56,6 +69,24 @@ namespace MauiSqlApp
             {
                 await _databaseService.DeleteStudentAsync(student);
                 LoadStudents();
+            }
+        }
+
+        private void OnPreviousClicked(object sender, EventArgs e)
+        {
+            if (_currentPage > 1)
+            {
+                _currentPage--;
+                DisplayStudentsForPage(_currentPage);
+            }
+        }
+
+        private void OnNextClicked(object sender, EventArgs e)
+        {
+            if (_currentPage < (_allStudents.Count + PageSize - 1) / PageSize)
+            {
+                _currentPage++;
+                DisplayStudentsForPage(_currentPage);
             }
         }
 

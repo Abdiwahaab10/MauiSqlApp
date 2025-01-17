@@ -18,7 +18,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MauiSqlApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0+a2ba7b55ea38734480a47df1e013173f6f4e70f3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0+eae0b4467028fdfa930dc8e49d3d1bb05e91dbef")]
 [assembly: System.Reflection.AssemblyProductAttribute("MauiSqlApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MauiSqlApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

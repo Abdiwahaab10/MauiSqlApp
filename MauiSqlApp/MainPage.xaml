@@ -2,29 +2,71 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MauiSqlApp.MainPage">
 
-    <StackLayout Padding="20" Spacing="10">
-        <!-- Student Registration Form -->
-        <Entry x:Name="NameEntry" Placeholder="Enter name" />
-        <Entry x:Name="AgeEntry" Placeholder="Enter age" Keyboard="Numeric" />
-        <Entry x:Name="EmailEntry" Placeholder="Enter email" Keyboard="Email" />
-        <Entry x:Name="CourseEntry" Placeholder="Enter course" />
+    <ScrollView VerticalOptions="FillAndExpand">
+        <StackLayout Padding="20" Spacing="10">
+            <!-- Student Registration Form -->
+            <Frame BorderColor="Gray" CornerRadius="10" Padding="10" BackgroundColor="White" HasShadow="True">
+                <StackLayout Spacing="10">
+                    <Label Text="Student Registration Form" FontSize="Large" FontAttributes="Bold" HorizontalOptions="Center" TextColor="Black" />
+                    <Entry x:Name="NameEntry" Placeholder="Enter name" TextColor="Black" />
+                    <Entry x:Name="AgeEntry" Placeholder="Enter age" Keyboard="Numeric" TextColor="Black" />
+                    <Entry x:Name="EmailEntry" Placeholder="Enter email" Keyboard="Email" TextColor="Black" />
+                    <Entry x:Name="CourseEntry" Placeholder="Enter course" TextColor="Black" />
+                    <Button Text="Add Student" Clicked="OnAddStudentClicked" BackgroundColor="LightBlue" TextColor="Black" />
+                </StackLayout>
+            </Frame>
 
-        <Button Text="Add Student" Clicked="OnAddStudentClicked" BackgroundColor="LightBlue" />
+            <!-- Table Header -->
+            <Frame BorderColor="Gray" CornerRadius="10" Padding="10" BackgroundColor="White" HasShadow="True">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Label Text="Name" Grid.Column="0" FontAttributes="Bold" TextColor="Black" />
+                    <Label Text="Age" Grid.Column="1" FontAttributes="Bold" TextColor="Black" />
+                    <Label Text="Email" Grid.Column="2" FontAttributes="Bold" TextColor="Black" />
+                    <Label Text="Course" Grid.Column="3" FontAttributes="Bold" TextColor="Black" />
+                    <Label Text="Action" Grid.Column="4" FontAttributes="Bold" TextColor="Black" />
+                </Grid>
+            </Frame>
 
-        <!-- List of Students -->
-        <CollectionView x:Name="StudentsCollectionView">
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <StackLayout Padding="10">
-                        <Label Text="{Binding Name}" FontSize="Medium" FontAttributes="Bold" />
-                        <Label Text="{Binding Age, StringFormat='Age: {0}'}" />
-                        <Label Text="{Binding Email, StringFormat='Email: {0}'}" />
-                        <Label Text="{Binding Course, StringFormat='Course: {0}'}" />
-                        <Button Text="Delete" Clicked="OnDeleteStudentClicked" BackgroundColor="LightCoral" CommandParameter="{Binding .}" />
-                    </StackLayout>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-    </StackLayout>
+            <!-- Table Body -->
+            <Frame BorderColor="Gray" CornerRadius="10" Padding="10" BackgroundColor="White" HasShadow="True">
+                <CollectionView x:Name="StudentsCollectionView">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Padding="10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Label Text="{Binding Name}" Grid.Column="0" TextColor="Black" />
+                                <Label Text="{Binding Age}" Grid.Column="1" TextColor="Black" />
+                                <Label Text="{Binding Email}" Grid.Column="2" TextColor="Black" />
+                                <Label Text="{Binding Course}" Grid.Column="3" TextColor="Black" />
+                                <Button Text="Delete" Clicked="OnDeleteStudentClicked" 
+                                        BackgroundColor="LightCoral" Grid.Column="4" 
+                                        CommandParameter="{Binding .}" TextColor="Black" />
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Frame>
+
+            <!-- Pagination Controls -->
+            <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="20">
+                <Button Text="Previous" Clicked="OnPreviousClicked" BackgroundColor="LightGray" TextColor="Black" />
+                <Label x:Name="PageNumberLabel" Text="Page 1" FontAttributes="Bold" TextColor="Black" />
+                <Button Text="Next" Clicked="OnNextClicked" BackgroundColor="LightGray" TextColor="Black" />
+            </StackLayout>
+        </StackLayout>
+    </ScrollView>
 
 </ContentPage>
