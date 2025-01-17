@@ -1,0 +1,19 @@
+﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MauiSqlApp.MainPage">
+
+    <StackLayout Padding="20">
+        <Entry x:Name="NameEntry" Placeholder="Enter name" />
+        <Entry x:Name="AgeEntry" Placeholder="Enter age" Keyboard="Numeric" />
+        <Button Text="Add Person" Clicked="OnAddPersonClicked" />
+        <ListView x:Name="PeopleListView">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <TextCell Text="{Binding Name}" Detail="{Binding Age}" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </StackLayout>
+
+   
+</ContentPage>
