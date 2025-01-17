@@ -1,6 +1,7 @@
 ﻿using Microsoft.Maui.Controls;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace MauiSqlApp
@@ -9,8 +10,9 @@ namespace MauiSqlApp
     {
         private DatabaseService _databaseService;
         private List<Student> _allStudents;
+        private List<Student> _filteredStudents;
         private int _currentPage = 1;
-        private const int PageSize = 5; // Number of students per page
+        private const int PageSize = 5;
 
         public MainPage()
         {
@@ -23,12 +25,13 @@ namespace MauiSqlApp
         private async void LoadStudents()
         {
             _allStudents = await _databaseService.GetStudentsAsync();
+            _filteredStudents = _allStudents;
             DisplayStudentsForPage(_currentPage);
         }
 
         private void DisplayStudentsForPage(int page)
         {
-            var studentsToDisplay = _allStudents
+            var studentsToDisplay = _filteredStudents
                 .Skip((page - 1) * PageSize)
                 .Take(PageSize)
                 .ToList();
@@ -60,6 +63,23 @@ namespace MauiSqlApp
             }
         }
 
+        private async void OnEditStudentClicked(object sender, EventArgs e)
+        {
+            var button = sender as Button;
+            var student = button.CommandParameter as Student;
+
+            if (student != null)
+            {
+                NameEntry.Text = student.Name;
+                AgeEntry.Text = student.Age.ToString();
+                EmailEntry.Text = student.Email;
+                CourseEntry.Text = student.Course;
+
+                await _databaseService.DeleteStudentAsync(student);
+                LoadStudents();
+            }
+        }
+
         private async void OnDeleteStudentClicked(object sender, EventArgs e)
         {
             var button = sender as Button;
@@ -67,9 +87,22 @@ namespace MauiSqlApp
 
             if (student != null)
             {
-                await _databaseService.DeleteStudentAsync(student);
-                LoadStudents();
+                bool confirm = await DisplayAlert("Confirm", "Are you sure you want to delete this student?", "Yes", "No");
+                if (confirm)
+                {
+                    await _databaseService.DeleteStudentAsync(student);
+                    LoadStudents();
+                }
             }
+        }
+
+        private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
+        {
+            string searchText = SearchBar.Text.ToLower();
+            _filteredStudents = _allStudents
+                .Where(s => s.Name.ToLower().Contains(searchText) || s.Email.ToLower().Contains(searchText) || s.Course.ToLower().Contains(searchText))
+                .ToList();
+            DisplayStudentsForPage(1);
         }
 
         private void OnPreviousClicked(object sender, EventArgs e)
@@ -83,10 +116,37 @@ namespace MauiSqlApp
 
         private void OnNextClicked(object sender, EventArgs e)
         {
-            if (_currentPage < (_allStudents.Count + PageSize - 1) / PageSize)
+            if (_currentPage < (_filteredStudents.Count + PageSize - 1) / PageSize)
             {
                 _currentPage++;
                 DisplayStudentsForPage(_currentPage);
+            }
+        }
+
+        private async void OnExportClicked(object sender, EventArgs e)
+        {
+            string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "students.csv");
+            using (var writer = new StreamWriter(filePath))
+            {
+                writer.WriteLine("Name,Age,Email,Course");
+                foreach (var student in _allStudents)
+                {
+                    writer.WriteLine($"{student.Name},{student.Age},{student.Email},{student.Course}");
+                }
+            }
+
+            await DisplayAlert("Success", $"Data exported to {filePath}", "OK");
+        }
+
+        private void OnThemeToggleClicked(object sender, EventArgs e)
+        {
+            if (Application.Current.UserAppTheme == AppTheme.Light)
+            {
+                Application.Current.UserAppTheme = AppTheme.Dark;
+            }
+            else
+            {
+                Application.Current.UserAppTheme = AppTheme.Light;
             }
         }
 

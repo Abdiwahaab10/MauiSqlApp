@@ -4,68 +4,128 @@
 
     <ScrollView VerticalOptions="FillAndExpand">
         <StackLayout Padding="20" Spacing="10">
+            <!-- Theme Toggle Button -->
+            <Button x:Name="ThemeToggleButton" Text="Toggle Dark Mode" Clicked="OnThemeToggleClicked" HorizontalOptions="End" />
+
             <!-- Student Registration Form -->
-            <Frame BorderColor="Gray" CornerRadius="10" Padding="10" BackgroundColor="White" HasShadow="True">
+            <Frame BorderColor="Gray" CornerRadius="10" Padding="10" BackgroundColor="{AppThemeBinding Light=White, Dark=Black}">
                 <StackLayout Spacing="10">
-                    <Label Text="Student Registration Form" FontSize="Large" FontAttributes="Bold" HorizontalOptions="Center" TextColor="Black" />
-                    <Entry x:Name="NameEntry" Placeholder="Enter name" TextColor="Black" />
-                    <Entry x:Name="AgeEntry" Placeholder="Enter age" Keyboard="Numeric" TextColor="Black" />
-                    <Entry x:Name="EmailEntry" Placeholder="Enter email" Keyboard="Email" TextColor="Black" />
-                    <Entry x:Name="CourseEntry" Placeholder="Enter course" TextColor="Black" />
+                    <Label Text="Student Registration Form" FontSize="Large" FontAttributes="Bold" HorizontalOptions="Center" TextColor="{AppThemeBinding Light=Black, Dark=White}" />
+                    <Entry x:Name="NameEntry" Placeholder="Enter name" TextColor="{AppThemeBinding Light=Black, Dark=White}" />
+                    <Entry x:Name="AgeEntry" Placeholder="Enter age" Keyboard="Numeric" TextColor="{AppThemeBinding Light=Black, Dark=White}" />
+                    <Entry x:Name="EmailEntry" Placeholder="Enter email" Keyboard="Email" TextColor="{AppThemeBinding Light=Black, Dark=White}" />
+                    <Entry x:Name="CourseEntry" Placeholder="Enter course" TextColor="{AppThemeBinding Light=Black, Dark=White}" />
                     <Button Text="Add Student" Clicked="OnAddStudentClicked" BackgroundColor="LightBlue" TextColor="Black" />
                 </StackLayout>
             </Frame>
 
-            <!-- Table Header -->
-            <Frame BorderColor="Gray" CornerRadius="10" Padding="10" BackgroundColor="White" HasShadow="True">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Label Text="Name" Grid.Column="0" FontAttributes="Bold" TextColor="Black" />
-                    <Label Text="Age" Grid.Column="1" FontAttributes="Bold" TextColor="Black" />
-                    <Label Text="Email" Grid.Column="2" FontAttributes="Bold" TextColor="Black" />
-                    <Label Text="Course" Grid.Column="3" FontAttributes="Bold" TextColor="Black" />
-                    <Label Text="Action" Grid.Column="4" FontAttributes="Bold" TextColor="Black" />
-                </Grid>
-            </Frame>
+            <!-- Search Bar -->
+            <SearchBar x:Name="SearchBar" Placeholder="Search students..." TextChanged="OnSearchTextChanged" />
 
-            <!-- Table Body -->
-            <Frame BorderColor="Gray" CornerRadius="10" Padding="10" BackgroundColor="White" HasShadow="True">
-                <CollectionView x:Name="StudentsCollectionView">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Padding="10">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <Label Text="{Binding Name}" Grid.Column="0" TextColor="Black" />
-                                <Label Text="{Binding Age}" Grid.Column="1" TextColor="Black" />
-                                <Label Text="{Binding Email}" Grid.Column="2" TextColor="Black" />
-                                <Label Text="{Binding Course}" Grid.Column="3" TextColor="Black" />
-                                <Button Text="Delete" Clicked="OnDeleteStudentClicked" 
-                                        BackgroundColor="LightCoral" Grid.Column="4" 
-                                        CommandParameter="{Binding .}" TextColor="Black" />
-                            </Grid>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
+            <!-- Table -->
+            <Frame BorderColor="Gray" CornerRadius="10" Padding="0" BackgroundColor="{AppThemeBinding Light=White, Dark=Black}">
+                <Grid>
+                    <!-- Table Header -->
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <!-- Header Row -->
+                        <RowDefinition Height="Auto" />
+                        <!-- Horizontal Line -->
+                        <RowDefinition Height="*" />
+                        <!-- Data Rows -->
+                    </Grid.RowDefinitions>
+
+                    <!-- Header Row -->
+                    <Grid Grid.Row="0" Padding="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="1" />
+                            <!-- Vertical border -->
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="1" />
+                            <!-- Vertical border -->
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="1" />
+                            <!-- Vertical border -->
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="1" />
+                            <!-- Vertical border -->
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Label Text="Name" Grid.Column="0" FontAttributes="Bold" TextColor="{AppThemeBinding Light=Black, Dark=White}" HorizontalOptions="Center" />
+                        <BoxView Grid.Column="1" WidthRequest="1" Color="Gray" VerticalOptions="Fill" />
+                        <!-- Vertical border -->
+                        <Label Text="Age" Grid.Column="2" FontAttributes="Bold" TextColor="{AppThemeBinding Light=Black, Dark=White}" HorizontalOptions="Center" />
+                        <BoxView Grid.Column="3" WidthRequest="1" Color="Gray" VerticalOptions="Fill" />
+                        <!-- Vertical border -->
+                        <Label Text="Email" Grid.Column="4" FontAttributes="Bold" TextColor="{AppThemeBinding Light=Black, Dark=White}" HorizontalOptions="Center" />
+                        <BoxView Grid.Column="5" WidthRequest="1" Color="Gray" VerticalOptions="Fill" />
+                        <!-- Vertical border -->
+                        <Label Text="Course" Grid.Column="6" FontAttributes="Bold" TextColor="{AppThemeBinding Light=Black, Dark=White}" HorizontalOptions="Center" />
+                        <BoxView Grid.Column="7" WidthRequest="1" Color="Gray" VerticalOptions="Fill" />
+                        <!-- Vertical border -->
+                        <Label Text="Action" Grid.Column="8" FontAttributes="Bold" TextColor="{AppThemeBinding Light=Black, Dark=White}" HorizontalOptions="Center" />
+                    </Grid>
+
+                    <!-- Horizontal Line Below Header -->
+                    <BoxView Grid.Row="1" HeightRequest="1" Color="Gray" HorizontalOptions="Fill" />
+
+                    <!-- Data Rows -->
+                    <CollectionView x:Name="StudentsCollectionView" Grid.Row="2">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <StackLayout>
+                                    <!-- Student Data Row -->
+                                    <Grid Padding="10">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="1" />
+                                            <!-- Vertical border -->
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="1" />
+                                            <!-- Vertical border -->
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="1" />
+                                            <!-- Vertical border -->
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="1" />
+                                            <!-- Vertical border -->
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Label Text="{Binding Name}" Grid.Column="0" TextColor="{AppThemeBinding Light=Black, Dark=White}" HorizontalOptions="Center" />
+                                        <BoxView Grid.Column="1" WidthRequest="1" Color="Gray" VerticalOptions="Fill" />
+                                        <!-- Vertical border -->
+                                        <Label Text="{Binding Age}" Grid.Column="2" TextColor="{AppThemeBinding Light=Black, Dark=White}" HorizontalOptions="Center" />
+                                        <BoxView Grid.Column="3" WidthRequest="1" Color="Gray" VerticalOptions="Fill" />
+                                        <!-- Vertical border -->
+                                        <Label Text="{Binding Email}" Grid.Column="4" TextColor="{AppThemeBinding Light=Black, Dark=White}" HorizontalOptions="Center" />
+                                        <BoxView Grid.Column="5" WidthRequest="1" Color="Gray" VerticalOptions="Fill" />
+                                        <!-- Vertical border -->
+                                        <Label Text="{Binding Course}" Grid.Column="6" TextColor="{AppThemeBinding Light=Black, Dark=White}" HorizontalOptions="Center" />
+                                        <BoxView Grid.Column="7" WidthRequest="1" Color="Gray" VerticalOptions="Fill" />
+                                        <!-- Vertical border -->
+                                        <Button Text="Edit" Clicked="OnEditStudentClicked" BackgroundColor="LightGreen" Grid.Column="8" CommandParameter="{Binding .}" TextColor="Black" HorizontalOptions="Center" />
+                                        <Button Text="Delete" Clicked="OnDeleteStudentClicked" BackgroundColor="LightCoral" Grid.Column="9" CommandParameter="{Binding .}" TextColor="Black" HorizontalOptions="Center" />
+                                    </Grid>
+
+                                    <!-- Horizontal Line Between Rows -->
+                                    <BoxView HeightRequest="1" Color="Gray" HorizontalOptions="Fill" />
+                                </StackLayout>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </Grid>
             </Frame>
 
             <!-- Pagination Controls -->
             <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="20">
                 <Button Text="Previous" Clicked="OnPreviousClicked" BackgroundColor="LightGray" TextColor="Black" />
-                <Label x:Name="PageNumberLabel" Text="Page 1" FontAttributes="Bold" TextColor="Black" />
+                <Label x:Name="PageNumberLabel" Text="Page 1" FontAttributes="Bold" TextColor="{AppThemeBinding Light=Black, Dark=White}" />
                 <Button Text="Next" Clicked="OnNextClicked" BackgroundColor="LightGray" TextColor="Black" />
             </StackLayout>
+
+            <!-- Export Button -->
+            <Button Text="Export as CSV" Clicked="OnExportClicked" BackgroundColor="LightBlue" TextColor="Black" />
         </StackLayout>
     </ScrollView>
 
