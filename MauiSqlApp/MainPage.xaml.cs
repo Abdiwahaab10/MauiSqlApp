@@ -31,6 +31,13 @@ namespace MauiSqlApp
 
         private void DisplayStudentsForPage(int page)
         {
+            if (_filteredStudents == null)
+            {
+                StudentsCollectionView.ItemsSource = null;
+                PageNumberLabel.Text = "Page 1";
+                return;
+            }
+
             var studentsToDisplay = _filteredStudents
                 .Skip((page - 1) * PageSize)
                 .Take(PageSize)
@@ -98,11 +105,24 @@ namespace MauiSqlApp
 
         private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
         {
-            string searchText = SearchBar.Text.ToLower();
-            _filteredStudents = _allStudents
-                .Where(s => s.Name.ToLower().Contains(searchText) || s.Email.ToLower().Contains(searchText) || s.Course.ToLower().Contains(searchText))
-                .ToList();
-            DisplayStudentsForPage(1);
+            if (_allStudents == null)
+                return;
+
+            string searchText = SearchBar.Text?.ToLower() ?? string.Empty;
+            if (string.IsNullOrEmpty(searchText))
+            {
+                _filteredStudents = _allStudents;
+            }
+            else
+            {
+                _filteredStudents = _allStudents
+                    .Where(s => (s.Name?.Contains(searchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                                (s.Email?.Contains(searchText, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                                (s.Course?.Contains(searchText, StringComparison.OrdinalIgnoreCase) ?? false))
+                    .ToList();
+            }
+            _currentPage = 1;
+            DisplayStudentsForPage(_currentPage);
         }
 
         private void OnPreviousClicked(object sender, EventArgs e)
@@ -116,6 +136,9 @@ namespace MauiSqlApp
 
         private void OnNextClicked(object sender, EventArgs e)
         {
+            if (_filteredStudents == null)
+                return;
+
             if (_currentPage < (_filteredStudents.Count + PageSize - 1) / PageSize)
             {
                 _currentPage++;
@@ -125,17 +148,38 @@ namespace MauiSqlApp
 
         private async void OnExportClicked(object sender, EventArgs e)
         {
+            if (_allStudents == null || _allStudents.Count == 0)
+            {
+                await DisplayAlert("Info", "No students to export.", "OK");
+                return;
+            }
+
             string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "students.csv");
             using (var writer = new StreamWriter(filePath))
             {
-                writer.WriteLine("Name,Age,Email,Course");
+                await writer.WriteLineAsync("Name,Age,Email,Course");
                 foreach (var student in _allStudents)
                 {
-                    writer.WriteLine($"{student.Name},{student.Age},{student.Email},{student.Course}");
+                    string name = EscapeCsvField(student.Name);
+                    string email = EscapeCsvField(student.Email);
+                    string course = EscapeCsvField(student.Course);
+                    await writer.WriteLineAsync($"{name},{student.Age},{email},{course}");
                 }
             }
 
             await DisplayAlert("Success", $"Data exported to {filePath}", "OK");
+        }
+
+        private static string EscapeCsvField(string? field)
+        {
+            if (string.IsNullOrEmpty(field))
+                return string.Empty;
+            
+            if (field.Contains(',') || field.Contains('"') || field.Contains('\n') || field.Contains('\r'))
+            {
+                return $"\"{field.Replace("\"", "\"\"")}\"";
+            }
+            return field;
         }
 
         private void OnThemeToggleClicked(object sender, EventArgs e)
