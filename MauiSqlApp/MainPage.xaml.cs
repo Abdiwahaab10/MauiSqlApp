@@ -108,7 +108,7 @@ namespace MauiSqlApp
             if (_allStudents == null)
                 return;
 
-            string searchText = SearchBar.Text?.ToLower() ?? string.Empty;
+            string searchText = SearchBar.Text ?? string.Empty;
             if (string.IsNullOrEmpty(searchText))
             {
                 _filteredStudents = _allStudents;
