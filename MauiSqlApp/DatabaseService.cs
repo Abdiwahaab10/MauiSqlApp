@@ -7,31 +7,58 @@ namespace MauiSqlApp
     public class DatabaseService
     {
         private SQLiteAsyncConnection _database;
+        private readonly string _dbPath;
+        private bool _isInitialized;
+        private readonly SemaphoreSlim _initLock = new(1, 1);
 
         public DatabaseService(string dbPath)
         {
-            _database = new SQLiteAsyncConnection(dbPath);
-            _database.CreateTableAsync<Student>().Wait();
+            _dbPath = dbPath;
         }
 
-        public Task<List<Student>> GetStudentsAsync()
+        private async Task InitializeAsync()
         {
-            return _database.Table<Student>().ToListAsync();
+            if (_isInitialized)
+                return;
+
+            await _initLock.WaitAsync();
+            try
+            {
+                if (_isInitialized)
+                    return;
+
+                _database = new SQLiteAsyncConnection(_dbPath);
+                await _database.CreateTableAsync<Student>();
+                _isInitialized = true;
+            }
+            finally
+            {
+                _initLock.Release();
+            }
         }
 
-        public Task<int> SaveStudentAsync(Student student)
+        public async Task<List<Student>> GetStudentsAsync()
         {
-            return _database.InsertAsync(student);
+            await InitializeAsync();
+            return await _database.Table<Student>().ToListAsync();
         }
 
-        public Task<int> UpdateStudentAsync(Student student)
+        public async Task<int> SaveStudentAsync(Student student)
         {
-            return _database.UpdateAsync(student);
+            await InitializeAsync();
+            return await _database.InsertAsync(student);
         }
 
-        public Task<int> DeleteStudentAsync(Student student)
+        public async Task<int> UpdateStudentAsync(Student student)
         {
-            return _database.DeleteAsync(student);
+            await InitializeAsync();
+            return await _database.UpdateAsync(student);
+        }
+
+        public async Task<int> DeleteStudentAsync(Student student)
+        {
+            await InitializeAsync();
+            return await _database.DeleteAsync(student);
         }
     }
 }
